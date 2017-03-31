@@ -1,6 +1,6 @@
-##高级概念
+## 高级概念
 
-###监听未来的action
+### 监听未来的action
 前面已经介绍了`takeEvery`是高阶函数,其实现的低阶函数中包括`take`,`take` 会暂停当前Generator,直到匹配的action被触发才会继续往下执行.很明显`take`相对`takeEvery`会更加灵活,下面两段代码实现的功能相同:
 ```
 	import {select,takeEvery} from 'redux-saga/effects'
@@ -29,7 +29,7 @@ function* watchAndLog(){
 }
 ```
 
-###非阻塞调用(Non-blocking calls)
+### 非阻塞调用(Non-blocking calls)
 前面提到的`take`,`call`会阻塞Generator的执行,`fork`可以实现和`call`一样的作用,但其执行是非阻塞的,在执行`fork`参数中的函数的同时,Generator会继续往下执行,如果需要取消`fork`任务,则可以使用`cancel`.下面通过代码演示:
 ```
 import { take, call, put, cancelled } from 'redux-saga/effects'
@@ -64,7 +64,7 @@ function* loginFlow() {
 `loginFlow`实现了一个登陆，登出功能.
 
 
-###并行执行任务(Running Tasks In Parallel)
+### 并行执行任务(Running Tasks In Parallel)
 通过yield数组(数组中为执行的任务),可以并行执行任务.
 ```
 import { call } from 'redux-saga/effects'
@@ -75,7 +75,7 @@ const [users, repos]  = yield [
   call(fetch, '/repos')
 ]
 ```
-###在多个Effects中竞赛(Start a race between multiple Effects)
+### 在多个Effects中竞赛(Start a race between multiple Effects)
 
 使用`race`Effect可以让多个Effects进行比赛.
 ```
@@ -115,7 +115,7 @@ function* watchStartBackgroundTask(){
 }
 ```
 
-###通过`yield*` 依次执行Sagas(Sequencing Sagas via yield*)
+### 通过`yield*` 依次执行Sagas(Sequencing Sagas via yield*)
 ```
 function* playLevelOne(){ ... }
 function* playLevelTwo(){ ... }
@@ -132,7 +132,7 @@ function* game(){
   yield put(showScore(score3))
 }
 ```
-###构成Sagas(Composing Sagas)
+### 构成Sagas(Composing Sagas)
 当使用`yield*`来构成sagas时,其存在某些限制:
 
 + 在同一时间只能执行一个Generator函数
@@ -160,7 +160,7 @@ function* game(){
     yield put(showResults(results))
   }
 ```
-###任务取消(Task cancellation)
+### 任务取消(Task cancellation)
 ```
 import { take,put,call,fork,cancel,cancelled } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
@@ -225,14 +225,14 @@ function* bgSync(){
 + 使用`race` effect
 + 平行的effect. 例如:yield [...]
 
-###redux-saga的fork模式(redux-saga's fork model)
+### redux-saga的fork模式(redux-saga's fork model)
 在redux-saga中你可以动态在后台fork task通过使用下面两个Effects
 
 + `fork`用来创建附加到父级的forks
 + `spawn`用来创建与父级分离的forks
 
-####附加到父级的forks(使用`fork` Effect)
-#####完成(Completion)
+#### 附加到父级的forks(使用`fork` Effect)
+##### 完成(Completion)
 发生下面情况Saga被终止：
 
 + 所有附加的fork是执行完成
@@ -296,10 +296,10 @@ function* main() {
 ```
 **注意：不能从`fork` effect中去捕获异常,附加的fork中的失败将导致其父进程中止**
 
-####与父级分离的forks(使用`spawn` Effect)
+#### 与父级分离的forks(使用`spawn` Effect)
 取消主effect不会取消`spawn`Effect;`spawn`Effect发生异常也不会冒泡到主effect
 
-###将sagas与外部输入/输出通信
+### 将sagas与外部输入/输出通信
 上面我们提到的都是通过redux中间件来使用redux-saga,redux-saga其实还提供了在中间件之外来控制输入输出.
 ```
 import {runSaga} from 'redux-saga'
@@ -315,7 +315,7 @@ const myIO = {
 runSaga(saga(),myIO)
 
 ```
-###Using Channels
+### Using Channels
 目前我们知道通过`take`,`put`我们可以与Redux Store进行交互.Channels可以实现与外部事件源或者sagas之间进行交互。通过这个章节我们可了解到:
 
 + 如何通过`yield eventChannel`Effect 来缓冲来具体的actions
@@ -323,7 +323,7 @@ runSaga(saga(),myIO)
 + 如何使用通用的`channel`工厂函数来创建channel.并将它用在`take/put`Effects中来实现saga之间的通信。
 
 
-####使用`actionChannel` Effect
+#### 使用`actionChannel` Effect
 首先我们来看一段代码:
 ```
 import{take,fork,...} from 'redux-saga/effects'
@@ -365,7 +365,7 @@ function* watchRequests(){
   const requestChan = yield actionChannel('REQUEST',buffers.sliding(5))
   ...
 }
-####使用`eventChannel`工厂来连接外部事件
+#### 使用`eventChannel`工厂来连接外部事件
 ```
 import {eventChannel,END} from 'redux-saga'
 
@@ -432,7 +432,7 @@ export function* saga() {
 }
 ```
 
-####使用`channel`进行在sagas间交互
+#### 使用`channel`进行在sagas间交互
 前面我们通过`actionChannel`实现了限制某个任务可同时执行的次数.下面我们实现限制某个时刻可同时执行n个任务.
 ```
 import { channel } from 'redux-saga'
