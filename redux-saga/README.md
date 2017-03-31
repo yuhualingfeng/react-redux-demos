@@ -1,8 +1,8 @@
-[基本概念](/yuhualingfeng/redux-series-local/redux-saga/Basic.md)
+[基本概念](/redux-saga/Basic.md)
 
-[高级概念](/yuhualingfeng/redux-series-local/redux-saga/Basic.md)
+[高级概念](/redux-saga/Advanced.md)
 
-[API](/yuhualingfeng/redux-series-local/redux-saga/Basic.md)
+[API](/redux-saga/API.md)
 
 ## 疑问
 ### 解释下Generator和Promise
