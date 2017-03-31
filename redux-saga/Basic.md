@@ -2,7 +2,7 @@
 
 ### 使用Saga辅助函数
 Saga辅助函数来自包`redux-saga/effects`,包括`takeEvery``takeLatest`
-```
+```javascript
 import {takeEvery,takeLatest} from 'redux-saga/effects'
 ```
 + takeEvery 可以同时进行多个异步请求
@@ -14,7 +14,7 @@ import {takeEvery,takeLatest} from 'redux-saga/effects'
 
 我们同样可以通过`redux-saga/effects`包提供的函数来创建Effect：
 
-```
+```javascript
 import {call,apply,cps} from 'redux-saga/effects'
 ```
 + call 非常适合返回Promise结果的函数
@@ -23,7 +23,7 @@ import {call,apply,cps} from 'redux-saga/effects'
 
 ### 发起action
 在middleware(redux-saga)中，可以使用`put`来发起`action`.它和通过redux中通过dispatch发起action的作用是一致的
-```
+```javascript
 	import { call, put } from 'redux-saga/effects'
 
 	function* fetchProducts() {

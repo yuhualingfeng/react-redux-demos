@@ -13,7 +13,7 @@
 + `args`:`Array` 传递给`saga`的参数
 
 **注意：**`saga`作为一个Generator函数，其返回值必须是一个Generator对象。
-```
+```javascript
 /**saga参数示例**/
 // example1
 function* root(){
@@ -37,7 +37,7 @@ function* root(){
 
 #### takeEvery(pattern,saga,...args)
 `takeEvery`是一个高阶函数,当redux中的action触发并与`pattern`匹配，就会执行`saga`函数。它的具体实现如下：
-```
+```javascript
 	function* takeEvery(pattern,saga,...args){
 		const task = yield fork(function* (){
 			while(true){
@@ -56,7 +56,7 @@ function* root(){
 
 #### takeLatest(pattern,saga,...args)
 `takeLatest`和`takeEvery`一样也是高阶函数,实现的功能也基本类似，唯一不同在于：`takeLatest`会取消之前执行的所有`saga`任务.例如当用户极速点击按钮触发action,`takeEvery`可能在执行多个saga任务,`takeLatest`则只会执行最后一个saga任务.`takeLatest`的实现代码如下:
-```
+```javascript
 function* takeLatest(pattern, saga, ...args) {
   const task = yield fork(function* () {
     let lastTask
@@ -73,7 +73,7 @@ function* takeLatest(pattern, saga, ...args) {
 ```
 #### throttle(ms,pattern, saga, ...args)
 当`pattern`与action匹配时,第一次会立即执行,后面再次匹配时必须要等待上一次执行完ms秒后才执行.实现代码如下：
-```
+```javascript
 function* throttle(ms, pattern, task, ...args) {
   const throttleChannel = yield actionChannel(pattern, buffers.sliding(1))
 

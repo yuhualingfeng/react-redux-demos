@@ -2,7 +2,7 @@
 
 ### 监听未来的action
 前面已经介绍了`takeEvery`是高阶函数,其实现的低阶函数中包括`take`,`take` 会暂停当前Generator,直到匹配的action被触发才会继续往下执行.很明显`take`相对`takeEvery`会更加灵活,下面两段代码实现的功能相同:
-```
+```javascript
 	import {select,takeEvery} from 'redux-saga/effects'
 	function* watchAndLog(){
 		yield takeEvery("*",function* logger(action){
@@ -15,7 +15,7 @@
 	}
 ```
 
-```
+```javascript
 import {select,take} from 'redux-saga/effects'
 
 function* watchAndLog(){
@@ -31,7 +31,7 @@ function* watchAndLog(){
 
 ### 非阻塞调用(Non-blocking calls)
 前面提到的`take`,`call`会阻塞Generator的执行,`fork`可以实现和`call`一样的作用,但其执行是非阻塞的,在执行`fork`参数中的函数的同时,Generator会继续往下执行,如果需要取消`fork`任务,则可以使用`cancel`.下面通过代码演示:
-```
+```javascript
 import { take, call, put, cancelled } from 'redux-saga/effects'
 import Api from '...'
 
@@ -61,12 +61,13 @@ function* loginFlow() {
     yield call(Api.clearItem, 'token')
   }
 }
+```
 `loginFlow`实现了一个登陆，登出功能.
 
 
 ### 并行执行任务(Running Tasks In Parallel)
 通过yield数组(数组中为执行的任务),可以并行执行任务.
-```
+```javascript
 import { call } from 'redux-saga/effects'
 
 // correct, effects will get executed in parallel
@@ -78,7 +79,7 @@ const [users, repos]  = yield [
 ### 在多个Effects中竞赛(Start a race between multiple Effects)
 
 使用`race`Effect可以让多个Effects进行比赛.
-```
+```javascript
 import {race,take,put} from 'redux-saga/effects'
 import {delay} from 'redux-saga'
 
@@ -94,7 +95,7 @@ function* fetchPostsWithTimeout(){
 }
 ```
 当然`race`还有一个用处是自动中断在比赛中失败的Effects.
-```
+```javascript
 import {race,take,put} from 'redux-saga/effects'
 
 function* backgroundTask(){
@@ -116,7 +117,7 @@ function* watchStartBackgroundTask(){
 ```
 
 ### 通过`yield*` 依次执行Sagas(Sequencing Sagas via yield*)
-```
+```javascript
 function* playLevelOne(){ ... }
 function* playLevelTwo(){ ... }
 function* playLevelThree(){ ... }
@@ -139,7 +140,7 @@ function* game(){
 + 需要单独测试嵌套的Generator函数
 
 你可以简单使用yield来同步开始一个和多个子任务.
-```
+```javascript
   function* fechPosts(){
     yield put(actions.requestPosts())
     const products = yield call(fetchApi,'./products')
@@ -154,14 +155,14 @@ function* game(){
 ```
 
 通过`yield`数组可以同步执行所有子Generator并返回它们的执行结果.
-```
+```javascript
   function* mainSaga(getState){
     const results = yield [call(task1),call(task2),...]
     yield put(showResults(results))
   }
 ```
 ### 任务取消(Task cancellation)
-```
+```javascript
 import { take,put,call,fork,cancel,cancelled } from 'redux-saga/effects'
 import { delay } from 'redux-saga'
 import {someApi , actions} from 'somewhere'
@@ -194,7 +195,7 @@ function* bgSync(){
 上面这段代码演示了如和取消执行的任务,`main` Generator函数作为Saga,一旦触发`START_BACKGROUND_SYNC`action就进行异步请求随后等待触发`STOP_BACKGROUND_SYNC`,然后取消异步任务`bgSync`.假如`bgSync`中还存在嵌套的子task,其也会被一起取消.
 
 如果我们需要测试`main` Generator函数,需要用到`createMockTask`函数来模拟任务.
-```
+```javascript
   describe('main', () => {
   const generator = main();
 
@@ -239,7 +240,7 @@ function* bgSync(){
 + 终止自己的指令体
 
 我们来看下下面这段代码:
-```
+```javascript
 import { delay } from 'redux-saga'
 import { fork, call, put } from 'redux-saga/effects'
 import api from './somewhere/api' // app specific
@@ -263,7 +264,7 @@ function* main() {
 `call(fetchAll)`执行完成的前提是两个`fork` Effects和`call(delay, 1000)`都已完成.
 
 细心的朋友可能注意到实现`call(fetchAll)`可以通过平行Effects来实现
-```
+```javascript
 function* fetchAll(){
   yield [
     call(fetchResource,'user')
@@ -275,7 +276,7 @@ function* fetchAll(){
 确实,这两种实现方式达到了同样的效果
 #####错误传播(Error propagation)
 我们来解释下平行Effects如何处理错误
-```
+```javascript
 yield [
   call(fetchResource,'user'),
   call(fetchResource,'comments'),
@@ -285,7 +286,7 @@ yield [
 假如三个子effect中任意一个失败那么这个主effect就会失败,此外其他的正在处理的子effect也会被取消.
 同样对于附加forks,当执行主体抛出错误或者某个`fork`抛出错误时Saga就会终止.
 可以在主effect中捕获异常,因为我们使用了阻塞调用
-```
+```javascript
 function* main() {
   try {
     yield call(fetchAll)
@@ -301,7 +302,7 @@ function* main() {
 
 ### 将sagas与外部输入/输出通信
 上面我们提到的都是通过redux中间件来使用redux-saga,redux-saga其实还提供了在中间件之外来控制输入输出.
-```
+```javascript
 import {runSaga} from 'redux-saga'
 
 function* saga(){ ... }
@@ -325,7 +326,7 @@ runSaga(saga(),myIO)
 
 #### 使用`actionChannel` Effect
 首先我们来看一段代码:
-```
+```javascript
 import{take,fork,...} from 'redux-saga/effects'
 function* watchRequests(){
   while(true){
@@ -338,7 +339,7 @@ function* handleRequest(payload){ ... }
 ```
 这里当触发 `REQUEST` action就会执行handleRequest任务,当`REQUEST`触发太频繁时就可能存在同一时间在执行多个handleRequest.
 假如我们希望当`REQUEST` action连续触发时,handleRequest能够依次排队执行应该怎么处理呢?这里我们提供了`actionChannel`可以解决此问题.
-```
+```javascript
 import {take,actionChannel,call,...} from 'redux-saga/effects'
 
 function* watchRequests(){
@@ -356,17 +357,18 @@ function* handleRequest(payload){
 
 ```
 默认情况下,`actionChannel`会无限制的接受排队action,你可以通过buffers来做一些限制.比如下面代码只接受并处理最近的5条actions。
-```
+```javascript
 import { buffers } from 'redux-saga'
 import {actionChannel} from 'redux-saga/effects'
 
-```
+
 function* watchRequests(){
   const requestChan = yield actionChannel('REQUEST',buffers.sliding(5))
   ...
 }
-#### 使用`eventChannel`工厂来连接外部事件
 ```
+#### 使用`eventChannel`工厂来连接外部事件
+```javascript
 import {eventChannel,END} from 'redux-saga'
 
 function countdown(secs){
@@ -392,7 +394,7 @@ function countdown(secs){
 注意:你需要对事件源进行校验，不能传入null或者undefined,虽然可以传入数字，但是我们还是建议传入像redux action一样的数据.
 
 接下来我们看看如何在saga中使用这个channel.
-```
+```javascript
 import {take,put,call} from 'redux-saga/effects'
 import {eventChannel,END } from 'redux-saga'
 
@@ -409,7 +411,7 @@ export function* saga(){
 }
 ```
 假如我们想提前结束事件订阅，可以使用`chan.close()`.
-```
+```javascript
 import { take, put, call, cancelled } from 'redux-saga/effects'
 import { eventChannel, END } from 'redux-saga'
 
@@ -434,7 +436,7 @@ export function* saga() {
 
 #### 使用`channel`进行在sagas间交互
 前面我们通过`actionChannel`实现了限制某个任务可同时执行的次数.下面我们实现限制某个时刻可同时执行n个任务.
-```
+```javascript
 import { channel } from 'redux-saga'
 import { take, fork, ... } from 'redux-saga/effects'
 
