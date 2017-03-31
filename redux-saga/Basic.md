@@ -34,7 +34,7 @@ import {call,apply,cps} from 'redux-saga/effects'
 ```
 ### 错误处理
 错误处理可以通过让你的API服务返回一个正常的含有错误标志的值.
-```
+```javascript
 import Api from './path/to/api'
 import {call,put} from 'redux-saga/effects'
 
