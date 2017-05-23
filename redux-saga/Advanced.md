@@ -3,16 +3,16 @@
 ### 监听未来的action
 前面已经介绍了`takeEvery`是高阶函数,其实现的低阶函数中包括`take`,`take` 会暂停当前Generator,直到匹配的action被触发才会继续往下执行.很明显`take`相对`takeEvery`会更加灵活,下面两段代码实现的功能相同:
 ```javascript
-	import {select,takeEvery} from 'redux-saga/effects'
-	function* watchAndLog(){
-		yield takeEvery("*",function* logger(action){
-		const state = yield select()
+import {select,takeEvery} from 'redux-saga/effects'
+function* watchAndLog(){
+	yield takeEvery("*",function* logger(action){
+  	const state = yield select()
 
-		console.log('action',action)
-		console.log('state after',state)
-		})
+  	console.log('action',action)
+  	console.log('state after',state)
+	})
 
-	}
+}
 ```
 
 ```javascript
@@ -447,7 +447,7 @@ function* watchRequests() {
   // create 3 worker 'threads'
   for (var i = 0; i < 3; i++) {
     yield fork(handleRequest, chan)
-  }d
+  }
 
   while (true) {
     const {payload} = yield take('REQUEST')
